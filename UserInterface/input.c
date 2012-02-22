@@ -9,6 +9,7 @@
 #include "states.h"
 #include "threads.h"
 
+BYTE playing = FALSE;
 BYTE authentication = FALSE;
 char temp_string[BUFFER_SIZE] = {0};
 

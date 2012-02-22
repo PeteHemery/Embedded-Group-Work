@@ -11,7 +11,7 @@
 #include "states.h"
 #include "threads.h"
 
-#define MENU_STR_NUM  5
+#define MENU_STR_NUM  6
 
 void menu_select(void);
 void show_choice(int);

@@ -30,15 +30,12 @@ enum display_states{
 #define LEFT            0
 #define RIGHT           1
 
-#define BLOCKING        1
 #define NOT_BLOCKING    0
-
-#define PIN 1
-#define TRACK 2
+#define BLOCKING        1
 
 #define PIN_MAX		  	4
-#define TRACK_MIN       4
-#define TRACK_MAX	  	8
+#define TRACK_MIN       1
+#define TRACK_MAX	  	5
 #define DIGITS_MAX		3
 
 #define ACCEPT_PLAY    'A'

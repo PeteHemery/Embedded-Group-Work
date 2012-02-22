@@ -39,12 +39,12 @@ void menu_select(void){
     switch(button_read){
       case '1': // Volume
       case '2': // Location
-      case '3': // Settings
-      case '4': // Log Out
+      case '3': // Display Settings
+      case '4': // Playback Settings
+      case '5': // Log Out
         choice = button_read - '0';
         show_choice(choice);
         break;
-      case '5':
       case '6':
       case '7':
       case '8':
@@ -68,9 +68,11 @@ void menu_select(void){
 		  case 2:
 	        //wifi_scan();
 		    break;
-		  case 3:
-		    break;
-		  case 4:
+          case 3:
+            break;
+          case 4:
+            break;
+		  case 5:
             set_menu(FALSE);
             reset_buffers();
 		    display_string(" Goodbye ",BLOCKING);
@@ -121,8 +123,9 @@ void show_choice(int choice){
     "",
     "1.Volume.",
     "2.Location.",
-    "3.Settings.",
-    "4.Log out."
+    "3.Display Settings.",
+    "4.Playback Settings.",
+    "5.Log out."
   };
 
   display_string(menu_strings[choice],NOT_BLOCKING);
