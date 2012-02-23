@@ -43,12 +43,13 @@ int main (void) {
       }
 
       pthread_mutex_lock(&button_Mutex);  // Unlock state machine
-      pthread_cond_signal(&button_Signal);
+      pthread_cond_broadcast(&button_Signal);
       pthread_mutex_unlock(&button_Mutex);
 
-	  pthread_cond_signal(&state_Signal);
+	  pthread_cond_broadcast(&state_Signal);
 	  pthread_mutex_unlock(&state_Mutex);
     }
   }
+  alive = FALSE; // fallen out by pressing 'x'
   return 0;
 }
