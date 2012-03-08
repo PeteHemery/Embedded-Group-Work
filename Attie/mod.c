@@ -10,6 +10,8 @@
 #include "mod.h"
 MODULE_LICENSE("Dual BSD/GPL");
 
+#define __arm__
+
 #ifdef __arm__
   #define usb_buffer_free(a,b,c,d)  usb_free_coherent((a),(b),(c),(d))
   #define usb_buffer_alloc(a,b,c,d) usb_alloc_coherent((a),(b),(c),(d))
