@@ -1,3 +1,9 @@
+/******************************************************************************************
+ * debug.c                                                                                *
+ * Description: This is used to allow the debug statements to be switched on or off       *
+ * Author: James Sleeman                                                                  *
+ *****************************************************************************************/
+
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
