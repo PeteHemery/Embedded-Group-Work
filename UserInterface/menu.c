@@ -7,8 +7,12 @@
 
 #include "menu.h"
 
+#define MENU_STR_NUM  7
+
+
 /*  MENU SELECTION */
 void menu_select(void){
+  enum {zero, VOLUME, LOCATION, SCROLL, PLAYBACK, LOG_OUT, EXIT_PROG};
   int choice = 1;
   char button_read = 0;
   int state_read;
@@ -37,26 +41,27 @@ void menu_select(void){
 
 /* Button has been pressed. Now what? */
     switch(button_read){
-      case '1': // Volume
-      case '2': // Location
-      case '3': // Display Settings
-      case '4': // Playback Settings
-      case '5': // Log Out
+      case '0' + VOLUME: // Volume
+      case '0' + LOCATION: // Location
+      case '0' + SCROLL: // Scroll Speed Settings
+      case '0' + PLAYBACK: // Playback Settings
+      case '0' + LOG_OUT: // Log Out
+      case '0' + EXIT_PROG: // Log Out
         choice = button_read - '0';
         show_choice(choice);
         break;
-      case '6':
+      /*case '6':
       case '7':
       case '8':
       case '9':
       case '0':
-        break;
+        break;*/
       case ACCEPT_PLAY:
-        //break;
+        break;
 
       case ENTER_MENU:
   	    switch(choice){
-		  case 1:
+		  case VOLUME:
 		    pthread_mutex_lock(&state_Mutex);
             state = SUBMENU_SELECT;
             state_read = state;
@@ -65,14 +70,14 @@ void menu_select(void){
             volume();
             show_choice(choice); // After return, display correct choice again
 		    break;
-		  case 2:
+		  case LOCATION:
 	        //wifi_scan();
 		    break;
-          case 3:
+          case SCROLL:
             break;
-          case 4:
+          case PLAYBACK:
             break;
-		  case 5:
+		  case LOG_OUT:
             set_menu(FALSE);
             reset_buffers();
 		    display_string(" Goodbye ",BLOCKING);
@@ -83,6 +88,9 @@ void menu_select(void){
             pthread_mutex_unlock(&state_Mutex);
             printf("Logging Out\n");
 		    break;
+		  case EXIT_PROG:
+		    printf("Exiting\n");
+		    exit(0);
           default:
 	        break;
 	    }
@@ -123,9 +131,10 @@ void show_choice(int choice){
     "",
     "1.Volume.",
     "2.Location.",
-    "3.Display Settings.",
+    "3.Scroll Settings.",
     "4.Playback Settings.",
-    "5.Log out."
+    "5.Log out.",
+    "6.Exit Program"
   };
 
   display_string(menu_strings[choice],NOT_BLOCKING);

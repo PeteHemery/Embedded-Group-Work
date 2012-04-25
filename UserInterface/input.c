@@ -24,19 +24,6 @@ void input_pin(char button_read){
   extern BYTE check_pin(char *, int);
 
   switch(button_read){
-  case '0':
-  case '1':
-  case '2':
-  case '3':
-  case '4':
-  case '5':
-  case '6':
-  case '7':
-  case '8':
-  case '9':
-
-    insert_char(button_read);
-    break;
 
   case ACCEPT_PLAY:
   case ENTER_MENU:
@@ -95,7 +82,10 @@ void input_pin(char button_read){
   case DELETE:
     delete_char();
     break;
+
   default:
+    if (button_read >= '0' && button_read <= '9')   /* 0-9*/
+      insert_char(button_read);
     break;
   }
 }
@@ -105,21 +95,10 @@ void input_pin(char button_read){
 void input_track_number(char button_read){
 
   switch(button_read){
-  case '0':
-  case '1':
-  case '2':
-  case '3':
-  case '4':
-  case '5':
-  case '6':
-  case '7':
-  case '8':
-  case '9':
-    insert_char(button_read);
-    break;
 
   case ACCEPT_PLAY:
   case ENTER_MENU:
+    printf("input_len: %d\n",input_len);
     if(input_len < TRACK_MIN || input_len >= TRACK_MAX){
       display_string("Invalid.",NOT_BLOCKING);
     }
@@ -164,7 +143,10 @@ void input_track_number(char button_read){
   case DELETE:
     delete_char();
     break;
+
   default:
+    if (button_read >= '0' && button_read <= '9')   /* 0-9*/
+      insert_char(button_read);
     break;
   }
 }
