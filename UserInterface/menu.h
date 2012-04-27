@@ -13,7 +13,10 @@
 
 void menu_select(void);
 void show_choice(int);
-extern void wifi_scan(void);
+
+void setup_scroll_delay(void);
+
+extern void location_info(void);
 extern void volume(void);
 
 extern int set_scroll_delay(int);

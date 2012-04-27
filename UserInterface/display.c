@@ -31,7 +31,7 @@ int input_len = 0;
 int input_ptr = 0;
 
 /* Scroll Delay */
-int scroll_delay = 6;
+int scroll_delay = 9;
 
 /*------------------------------------------------------------------------------
  * Display State Machine
@@ -470,10 +470,10 @@ void set_menu(BYTE in){
 
 int set_scroll_delay(int delay)
 {
-  if (delay > 0 && delay <= 15) // Sanity check
+  if (delay > 0 && delay <= 9) // Sanity check
   {
     pthread_mutex_lock(&display_Mutex);
-    scroll_delay = delay+5;
+    scroll_delay = delay + 4;
     pthread_mutex_unlock(&display_Mutex);
   }
   else
@@ -485,5 +485,5 @@ int set_scroll_delay(int delay)
 
 int get_scroll_delay(void)
 {
-  return scroll_delay - 5;
+  return scroll_delay - 4;
 }
