@@ -16,4 +16,7 @@ void show_choice(int);
 extern void wifi_scan(void);
 extern void volume(void);
 
+extern int set_scroll_delay(int);
+extern int get_scroll_delay(void);
+
 #endif /* MENU_H_ */

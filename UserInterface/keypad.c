@@ -9,6 +9,8 @@
 
 char button = FALSE;  // Button pressed 1-16 or -1 for multiple buttons
 
+extern int scroll_delay;
+
 BYTE digits[COLS] = {0x00,0x00,0x00,0x00};
 
 /*------------------------------------------------------------------------------
@@ -17,7 +19,7 @@ BYTE digits[COLS] = {0x00,0x00,0x00,0x00};
  */
 void * keypad(void){
   int col;
-  int timeout = SCROLL_DELAY;
+  int timeout = scroll_delay;
   char str[6];
   
   while(alive){
@@ -28,7 +30,7 @@ void * keypad(void){
 
     if(--timeout == 0){
       update_display(); // display.c
-      timeout = SCROLL_DELAY;
+      timeout = scroll_delay;
     }
     pthread_mutex_unlock(&display_Mutex);
 
@@ -101,4 +103,5 @@ void read_button(int col, char in){
   }
   return;
 } 
+
 

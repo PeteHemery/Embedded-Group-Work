@@ -16,7 +16,6 @@
 
 #define BUTTON_WAIT_DELAY   4
 #define BUTTON_PRESS_DELAY  8
-#define SCROLL_DELAY        6
 
 void * keypad(void);
 void read_button(int, char);

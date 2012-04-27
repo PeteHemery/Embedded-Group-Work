@@ -84,6 +84,8 @@ extern int logged_in; // (states.c)
 
 extern int gst_state;
 
+extern int scroll_delay;
+
 void update_display(void);
 
 void insert_char(char);
@@ -98,4 +100,8 @@ void display_volume(long);
 
 extern void reset_buffers(void);
 extern void set_menu(BYTE);
+
+int set_scroll_delay(int);
+int get_scroll_delay(void);
+
 #endif /* DISPLAY_H_ */

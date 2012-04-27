@@ -30,6 +30,9 @@ int cursor_offset = 0;
 int input_len = 0;
 int input_ptr = 0;
 
+/* Scroll Delay */
+int scroll_delay = 6;
+
 /*------------------------------------------------------------------------------
  * Display State Machine
  *------------------------------------------------------------------------------
@@ -456,4 +459,31 @@ void set_menu(BYTE in){
   if(in == FALSE){
     reset_buffers();
   }
+}
+
+
+
+/*------------------------------------------------------------------------------
+ * scroll delay control
+ *------------------------------------------------------------------------------
+ */
+
+int set_scroll_delay(int delay)
+{
+  if (delay > 0 && delay <= 15) // Sanity check
+  {
+    pthread_mutex_lock(&display_Mutex);
+    scroll_delay = delay+5;
+    pthread_mutex_unlock(&display_Mutex);
+  }
+  else
+  {
+    return 1;
+  }
+  return 0;
+}
+
+int get_scroll_delay(void)
+{
+  return scroll_delay - 5;
 }

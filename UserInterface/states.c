@@ -7,7 +7,8 @@
 
 #include "states.h"
 
-int state = INIT_STATE;	// State machine variable
+//int state = INIT_STATE; // State machine variable
+int state = WAITING_LOGGED_IN; // State machine variable
 int logged_in = FALSE;  		// Client connected to server
 
 void * state_machine(void){
