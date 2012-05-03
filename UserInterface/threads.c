@@ -15,6 +15,7 @@
 #include "top.h"
 #include "pio_term.h"
 #include "threads.h"
+#include "gstClient.h"
 
 /* Thread Names */
 pthread_t keypad_thread;
@@ -158,6 +159,7 @@ void stop_logged_in_threads(void)
   int status = 0;
   void *res;
 
+  killGst();
   status = pthread_join(gst_control_thread, &res);
   if (status != 0)
   {

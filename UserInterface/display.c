@@ -17,6 +17,7 @@
 #include "display.h"
 #include "displayConstants.h"
 #include "debug.h"
+#include "states.h"
 
 /* Display Buffers */
 char input_buffer[BUFFER_SIZE] = {0};
@@ -41,7 +42,7 @@ int input_len = 0;
 int input_ptr = 0;
 
 /* Scroll Delay */
-int scroll_delay = 9;
+int scroll_delay = 6;
 
 /**
  *  @brief Display State Machine.
@@ -502,7 +503,7 @@ void display_input_buffer(void){
  *  @return Void.
  */
 void display_time(char *in){
-  if (display_flag == WAITING && (0 == strlen(input_buffer)))
+  if (display_flag == WAITING && (0 == strlen(input_buffer)) && state == WAITING_LOGGED_IN)
   {
     strcpy(display_buffer,in);
     display_flag = DISPLAYING_TIME;

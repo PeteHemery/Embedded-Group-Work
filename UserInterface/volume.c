@@ -35,8 +35,8 @@ void SetAlsaVolume(long volume)
   snd_mixer_t *handle;
   snd_mixer_selem_id_t *sid;
   const char *card = "default";
-  const char *selem_name = "Master";
-  //const char *selem_name = "DAC2 Digital Course";
+  //const char *selem_name = "Master";
+  const char *selem_name = "DAC2 Digital Fine";
 
   snd_mixer_open(&handle, 0);
   snd_mixer_attach(handle, card);
@@ -49,7 +49,7 @@ void SetAlsaVolume(long volume)
   snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
 
   snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
-  snd_mixer_selem_set_playback_volume_all(elem, volume * max / 100);
+  snd_mixer_selem_set_playback_volume_all(elem, volume * max / 100.0);
 
   snd_mixer_close(handle);
 }
@@ -68,8 +68,8 @@ void get_volume(long *ptr){
   snd_mixer_t *handle;
   snd_mixer_selem_id_t *sid;
   const char *card = "default";
-  const char *selem_name = "Master";
-  //const char *selem_name = "DAC2 Digital Course";
+  //const char *selem_name = "Master";
+  const char *selem_name = "DAC2 Digital Fine";
 
   snd_mixer_open(&handle, 0);
   snd_mixer_attach(handle, card);
@@ -85,7 +85,7 @@ void get_volume(long *ptr){
   printd("Volume range <%lu,%lu>\n", min, max);
   snd_mixer_selem_get_playback_volume(elem,0,ptr);
   printd("volume val = %lu\n",*ptr);
-  *ptr /= (max / 100);
+  *ptr /= (max / 100.0);
   snd_mixer_close(handle);
 }
 

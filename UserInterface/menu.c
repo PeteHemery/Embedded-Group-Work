@@ -132,16 +132,18 @@ void menu_select(void){
 	      {
 		set_menu(FALSE);
 		reset_buffers();
-		display_string(" Goodbye ",BLOCKING);
+
 	
 		pthread_mutex_lock(&state_Mutex);
 		logged_in = FALSE;
 		already_logged_in = FALSE;
+    stop_logged_in_threads();
           state = INIT_STATE;
           state_read = state;
           pthread_mutex_unlock(&state_Mutex);
   
           printd("Logging Out\n");
+		display_string(" Goodbye ",BLOCKING);
         }
 		    break;
 

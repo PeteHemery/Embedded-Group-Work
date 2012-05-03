@@ -24,7 +24,7 @@ enum ui_states{
 /* External Variables */
 extern int state;
 extern BYTE playing;
-extern char * emergMsg;
+extern int paused;
 
 /* Local Prototypes */
 void * state_machine(void);

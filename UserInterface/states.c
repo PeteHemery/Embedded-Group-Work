@@ -18,6 +18,7 @@
 
 int state = INIT_STATE;	// State machine variable
 int logged_in = FALSE;  		// Client connected to server
+int paused = FALSE;
 
 //int state = WAITING_LOGGED_IN; // State machine variable
 //int logged_in = TRUE;          // Client connected to server
@@ -39,7 +40,6 @@ void * state_machine(void){
   char *emergency="! EMERGENCY !";
   char button_read = FALSE;  // Local snapshot of Global 'Button'
   int state_read;
-  int pause = FALSE;
 
   while(alive){
 	  pthread_mutex_lock(&state_Mutex);
@@ -104,9 +104,10 @@ void * state_machine(void){
 	      switch(button_read){
 	      
           case ACCEPT_PLAY:
-            pause=~pause;
+            
+            paused=~paused;
 
-            if (pause != FALSE)
+            if (paused != FALSE)
             {
               pauseGst();
             }
@@ -114,7 +115,7 @@ void * state_machine(void){
             {
               playGst();
             }
-            printf("pause = %d\n",pause);
+            printf("paused = %d\n",paused);
             break;
 
           case ENTER_MENU:
