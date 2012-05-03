@@ -15,6 +15,7 @@
 #include "threads.h"
 #include "states.h"
 #include "debug.h"
+#include "gstClient.h"
 
 int state = INIT_STATE;	// State machine variable
 int logged_in = FALSE;  		// Client connected to server
@@ -23,7 +24,7 @@ int paused = FALSE;
 //int state = WAITING_LOGGED_IN; // State machine variable
 //int logged_in = TRUE;          // Client connected to server
 
-
+extern BYTE play_track(char * buffer,int buf_len);
 extern int getFollower();
 
 /**
@@ -104,18 +105,18 @@ void * state_machine(void){
 	      switch(button_read){
 	      
           case ACCEPT_PLAY:
-            
-            paused=~paused;
 
-            if (paused != FALSE)
+            if (paused == FALSE)
             {
               pauseGst();
               display_string("Paused",NOT_BLOCKING);
+              paused = TRUE;
             }
             else
             {
               playGst();
               display_string("Playing",NOT_BLOCKING);
+              paused = FALSE;
             }
             printf("paused = %d\n",paused);
             break;

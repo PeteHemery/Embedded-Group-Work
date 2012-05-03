@@ -23,6 +23,7 @@
 #include "threads.h"
 #include "gstClient.h"
 #include "debug.h"
+#include "states.h"
 
 #define GST_TIME    1
 #define WIFI_TIME   6
@@ -106,6 +107,13 @@ void * timer(void){
     }
     else
     {
+      if (!paused && init == TRUE)
+      {
+        killGst();
+        init = FALSE;
+        clear_time();
+      }
+
       timeToWait.tv_sec = now.tv_sec;//+1;
       timeToWait.tv_nsec = 500000000UL;//0;
       //display_time("    ");

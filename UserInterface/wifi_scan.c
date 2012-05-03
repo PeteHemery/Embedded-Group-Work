@@ -55,7 +55,9 @@ void * wifi_scan(void)
   char data[DATA_SIZE];
 
   int highest_quality, new_quality;
-  char new_mac[STRING_LENGTH];
+  char new_mac[STRING_LENGTH] = {'\0'};
+
+  int mac_count = 1;
 
 
   gettimeofday(&now,NULL);
@@ -97,18 +99,23 @@ void * wifi_scan(void)
     }
     if (highest_quality != 0)
     {
-      if (strcmp(closest_mac,old_mac) != 0)
+      if (mac_count == 0)
       {
-        printd("closest mac:\t\t %s\n",closest_mac);
-        mac_changed = TRUE;
-        strcpy(old_mac,closest_mac);
-        
-	      
-	      //pthread_mutex_lock(&network_Mutex);
-	      pthread_cond_broadcast(&network_Signal); //wake up the network thread
-	      
-    	  //pthread_mutex_unlock(&network_Mutex);
-    	  
+        if (strcmp(closest_mac,old_mac) != 0)
+        {
+          printd("closest mac:\t\t %s\n",closest_mac);
+          mac_changed = TRUE;
+          strcpy(old_mac,closest_mac);
+
+	        //pthread_mutex_lock(&network_Mutex);
+	        pthread_cond_signal(&network_Signal); //wake up the network thread
+	        
+      	  //pthread_mutex_unlock(&network_Mutex);
+        }
+      }
+      else
+      {
+        mac_count--;
       }
     }
     //sleep(10);

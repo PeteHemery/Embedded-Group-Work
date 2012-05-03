@@ -25,7 +25,7 @@ char temp_string[BUFFER_SIZE] = {0};
 
 BYTE pause = FALSE;
 
-BYTE play_track(char * buffer,int buf_len);
+extern BYTE play_track(char * buffer,int buf_len);
 
 
 int already_logged_in = FALSE;

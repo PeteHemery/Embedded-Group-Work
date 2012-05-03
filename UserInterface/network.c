@@ -102,12 +102,10 @@ void * networkingFSM(void)
       pthread_mutex_unlock(&network_Mutex);
 	    break;
     }
-	  else
-    {  
-  	  bzero(localRecPacket,MAXDATASIZE);
-      strncpy(localRecPacket, receivedPacket, MAC_LEN);
-      reqCode = playCode;
-	  }
+    
+	  bzero(localRecPacket,MAXDATASIZE);
+    strncpy(localRecPacket, receivedPacket, MAC_LEN);
+    reqCode = playCode;
 	  pthread_mutex_unlock(&network_Mutex);
 	  
 	  if (alive == FALSE)

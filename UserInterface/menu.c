@@ -16,6 +16,7 @@
 #include "threads.h"
 #include "display.h"
 #include "debug.h"
+#include "gstClient.h"
 
 int cont = 0;
 
@@ -84,6 +85,16 @@ void menu_select(void){
         break;
         
       case ACCEPT_PLAY:
+        if (paused == FALSE)
+        {
+          pauseGst();
+          paused = TRUE;
+        }
+        else
+        {
+          playGst();
+          paused = FALSE;
+        }
         break;
 
       case ENTER_MENU:
