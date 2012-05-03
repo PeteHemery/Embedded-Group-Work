@@ -110,10 +110,12 @@ void * state_machine(void){
             if (paused != FALSE)
             {
               pauseGst();
+              display_string("Paused",NOT_BLOCKING);
             }
             else
             {
               playGst();
+              display_string("Playing",NOT_BLOCKING);
             }
             printf("paused = %d\n",paused);
             break;
@@ -122,6 +124,16 @@ void * state_machine(void){
             pthread_mutex_lock(&state_Mutex);
             state = MENU_SELECT;
             pthread_mutex_unlock(&state_Mutex);
+            break;
+
+          case FORWARD:
+            killGst();
+            play_track("F",1);
+            break;
+
+          case BACK:
+            killGst();
+            play_track("B",1);
             break;
 
           default:

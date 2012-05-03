@@ -91,9 +91,9 @@ void * networkingFSM(void)
 	  pthread_mutex_lock(&network_Mutex);
 	  pthread_cond_wait(&network_Signal, &network_Mutex);
 	  opcode = task;
-	  if (mac_changed == 1 && logged_in)
+	  if (mac_changed == TRUE)
     {
-      mac_changed = 0;
+      mac_changed = FALSE;
       
       reqCode = CLOSEST_MAC_ADDRESS;
       state = CREATEHEADERS;
@@ -502,16 +502,17 @@ int createPacket(char * localData)
           printf("follower\n");
 	      return  WAITING;
 	    }
-          printf("in PLAY state\n");
-      
-	    
-      sprintf(packet, "%c%c%s\n", opcode, reqCode, localData); // request packet, 
+      printf("in PLAY state\n");
       
       if (reqCode == CLOSEST_MAC_ADDRESS)
 	    {
 	      printf("Sending Closest Mac\n");
 	      sprintf(packet, "%c%c%s\n", opcode, reqCode, clMac);
+        break;
 	    }
+    
+      sprintf(packet, "%c%c%s\n", opcode, reqCode, localData); // request packet, 
+
  
       break;
 

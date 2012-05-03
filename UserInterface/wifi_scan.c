@@ -59,7 +59,7 @@ void * wifi_scan(void)
 
 
   gettimeofday(&now,NULL);
-  while(alive && logged_in)
+  while(alive)
   {
     highest_quality = 0;
     new_quality = 0;
