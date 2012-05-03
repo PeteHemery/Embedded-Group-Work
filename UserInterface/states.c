@@ -92,9 +92,9 @@ void * state_machine(void){
 	          //alive = FALSE; // NEEDS WORK
 	        }
 	        display_string("Please Enter PIN.",NOT_BLOCKING);
-	        break;
 	      }
-	      
+	       break;
+
 	    case INPUTTING_PIN:
 	      if(button_read){
 	        input_pin(button_read);  // Sends a snapshot of button pressed

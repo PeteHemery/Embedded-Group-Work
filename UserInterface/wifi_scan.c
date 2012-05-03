@@ -19,6 +19,7 @@
 #include "debug.h"
 #include "threads.h"
 #include "states.h"
+#include "network.h"
 
 #define COMMAND_LEN 150
 #define DATA_SIZE 512
@@ -105,7 +106,13 @@ void * wifi_scan(void)
         {
           printd("closest mac:\t\t %s\n",closest_mac);
           mac_changed = TRUE;
+          
           strcpy(old_mac,closest_mac);
+
+          pthread_mutex_lock(&network_Mutex);
+          task = PLAY; 
+          strncpy(data, closest_mac, PACKETLEN);
+          pthread_mutex_unlock(&network_Mutex);
 
 	        //pthread_mutex_lock(&network_Mutex);
 	        pthread_cond_signal(&network_Signal); //wake up the network thread
