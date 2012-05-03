@@ -42,7 +42,7 @@ int input_len = 0;
 int input_ptr = 0;
 
 /* Scroll Delay */
-int scroll_delay = 6;
+int scroll_delay = 8;
 
 /**
  *  @brief Display State Machine.

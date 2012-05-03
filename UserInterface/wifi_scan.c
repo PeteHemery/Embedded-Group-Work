@@ -28,6 +28,8 @@
 
 #define TIMEOUT 10
 
+#define maccy ""ZZ
+
 char closest_mac[STRING_LENGTH] = {'\0'};
 char old_mac[STRING_LENGTH] = {'\0'};
 BYTE mac_changed = FALSE;
@@ -111,6 +113,7 @@ void * wifi_scan(void)
 
           pthread_mutex_lock(&network_Mutex);
           task = PLAY; 
+          reqCode = '6';
           strncpy(data, closest_mac, PACKETLEN);
           pthread_mutex_unlock(&network_Mutex);
 

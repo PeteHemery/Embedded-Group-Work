@@ -52,8 +52,8 @@ char packet[PACKETLEN] = {0};
 char opcode;
 int sentt = 0;
 int follower = -1;
-char playCode = '0';
-char reqCode = '0';
+char playCode = '6';
+char reqCode = '6';
 //char * msg;
 
 extern int logged_in; // (states.c)
