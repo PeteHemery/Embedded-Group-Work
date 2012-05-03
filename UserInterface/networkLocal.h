@@ -21,21 +21,20 @@
 
 /* server info */
 #define PORT "4444"
-//#define IP "164.11.222.103"
-//#define IP "164.11.222.88"
 
-#define IP "localhost"
-
-<<<<<<< HEAD
-#define IPLEN 14
-
+#define IP "164.11.222.69"
+//#define IP "192.168.1.47"
 //#define IP "localhost"
+
+#define IPLEN 16
 
 #define TIMEOUTVALUE 3
 
 void PANIC(char * msg);
 void * receive(void);
 int parsePacket(char * buffer);
-void createPacket(char * localData);
+int createPacket(char * localData);
+
+#define MAC_LEN 18
 
 #endif /* NETWORKLOCAL_H_ */   

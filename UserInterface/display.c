@@ -40,6 +40,8 @@ int cursor_offset = 0;
 int input_len = 0;
 int input_ptr = 0;
 
+/* Scroll Delay */
+int scroll_delay = 9;
 
 /**
  *  @brief Display State Machine.
@@ -146,7 +148,7 @@ void update_display(void){
             pad--;
           }
           else{
-            pthread_cond_signal(&display_Signal);
+            pthread_cond_broadcast(&display_Signal);
             blocking = FALSE;
             block = blocking;
             offset = 0;
@@ -159,6 +161,25 @@ void update_display(void){
         }
       break;
       
+
+    case DISPLAYING_TIME:
+      cursor_blink = FALSE;
+      for(i=0;i<COLS;i++){
+        digits[i] = display_char(display_buffer[i]);
+      }
+      digits[1] |= CURSOR_VALUE;
+
+      display_flag = WAITING;
+      break;
+
+    case CLEARING_TIME:
+      cursor_blink = TRUE;
+      for(i=0;i<COLS;i++){
+        digits[i] = 0;
+      }
+      display_flag = WAITING;
+
+
     case INPUTTING:
       for(i=0;i<COLS;i++){
         digits[i] = display_char(input_buffer[i+cursor_offset]);
@@ -307,7 +328,8 @@ void delete_char(void){
         cursor_pos++;
       }
     }
-    printd("cursor_offset: %d\n cursor_pos: %d\n input_len: %d\n",cursor_offset,cursor_pos,input_len);
+    printd("cursor_offset: %d\n cursor_pos: %d\n input_len: %d\n",
+			cursor_offset,      cursor_pos,      input_len);
   }
   display_input_buffer();
 }
@@ -341,7 +363,8 @@ void move_cursor(int direction){
           if(++cursor_pos > DIGITS_MAX){
             cursor_pos = DIGITS_MAX;
             if(logged_in == TRUE){ // Inputting Track Number
-              if((cursor_pos + cursor_offset) < TRACK_MAX-1){ // limit digits displayed
+				/* limit digits displayed */
+              if((cursor_pos + cursor_offset) < TRACK_MAX-1){
                 cursor_offset++;
               }
             }
@@ -478,16 +501,18 @@ void display_input_buffer(void){
  *  @param Void.
  *  @return Void.
  */
-void display_time(void){
+void display_time(char *in){
+  if (display_flag == WAITING && (0 == strlen(input_buffer)))
+  {
+    strcpy(display_buffer,in);
+    display_flag = DISPLAYING_TIME;
+  }
+}
 
-  /* TODO */
-  /*
-  long time;
-  time = gst_get_time();
-  sprintf(display_buffer,"%0.2d.0.2d%", time / 60, time % 60);
-  display_flag = CHANGED;
-  */
-};
+void clear_time(void){
+  bzero(display_buffer,BUFFER_SIZE);
+  display_flag = CLEARING_TIME;
+}
 
 /**
  *  @brief Display Volume.
@@ -506,7 +531,7 @@ void display_volume(long vol){
   cursor_pos = 2;
   reset_flag = TRUE;
   pthread_mutex_unlock(&display_Mutex);
-};
+}
 
 /**
  *  @brief This function is used to refresh the display buffer.
@@ -555,4 +580,30 @@ void set_menu(BYTE in){
   if(in == FALSE){
     reset_buffers();
   }
+}
+
+
+/*------------------------------------------------------------------------------
+ * scroll delay control
+ *------------------------------------------------------------------------------
+ */
+
+int set_scroll_delay(int delay)
+{
+  if (delay > 0 && delay <= 9) // Sanity check
+  {
+    pthread_mutex_lock(&display_Mutex);
+    scroll_delay = delay + 4;
+    pthread_mutex_unlock(&display_Mutex);
+  }
+  else
+  {
+    return 1;
+  }
+  return 0;
+}
+
+int get_scroll_delay(void)
+{
+  return scroll_delay - 4;
 }

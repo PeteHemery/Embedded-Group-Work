@@ -35,8 +35,8 @@ void SetAlsaVolume(long volume)
   snd_mixer_t *handle;
   snd_mixer_selem_id_t *sid;
   const char *card = "default";
-  //const char *selem_name = "Master";
-  const char *selem_name = "DAC2 Digital Course";
+  const char *selem_name = "Master";
+  //const char *selem_name = "DAC2 Digital Course";
 
   snd_mixer_open(&handle, 0);
   snd_mixer_attach(handle, card);
@@ -68,8 +68,8 @@ void get_volume(long *ptr){
   snd_mixer_t *handle;
   snd_mixer_selem_id_t *sid;
   const char *card = "default";
-  //const char *selem_name = "Master";
-  const char *selem_name = "DAC2 Digital Course";
+  const char *selem_name = "Master";
+  //const char *selem_name = "DAC2 Digital Course";
 
   snd_mixer_open(&handle, 0);
   snd_mixer_attach(handle, card);
@@ -134,7 +134,7 @@ void volume(void){
     pthread_mutex_lock(&state_Mutex);
     state_read = state;
     pthread_mutex_unlock(&state_Mutex);
-    if(state_read == EMERGENCY || alive == FALSE){
+    if(state_read == EMERGENCY_STATE || alive == FALSE){
       set_menu(FALSE); // in display.c
       break; // Get out if there's an emergency
     }

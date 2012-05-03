@@ -12,7 +12,7 @@
 /* State Table */
 enum ui_states{
     INIT_STATE,
-    EMERGENCY,
+    EMERGENCY_STATE,
     WAITING_LOGGED_OUT,
     INPUTTING_PIN,
     WAITING_LOGGED_IN,
@@ -21,15 +21,10 @@ enum ui_states{
     SUBMENU_SELECT
 } current_state;
 
-enum gst_states{
-    STOPPED,
-    PLAYING,
-    PAUSED
-} gstreamer_state;
-
 /* External Variables */
 extern int state;
 extern BYTE playing;
+extern char * emergMsg;
 
 /* Local Prototypes */
 void * state_machine(void);
@@ -38,5 +33,9 @@ void * state_machine(void);
 extern void input_pin(char);
 extern void input_track_number(char);
 extern void menu_select(void);
+
+extern void playGst();
+extern void pauseGst();
+extern void seekGst();
 
 #endif /* STATES_H_ */

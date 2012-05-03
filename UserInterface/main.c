@@ -44,7 +44,7 @@ int main (void) {
   int prev_state = state;
 //  sighandler_t
 
-  if(networkSetup() != 0){
+  if(ret = networkSetup() != 0){
     printd("Socket failed to init, error no: %d\n", ret);
     printf("Network setup failed\n");
     return 1;
@@ -66,7 +66,7 @@ int main (void) {
   while((ret = getchar()) != 'x' && alive){
     if (ret == 'e'){
       pthread_mutex_lock(&state_Mutex);
-      if (state == EMERGENCY){
+      if (state == EMERGENCY_STATE){
         state = prev_state;
         if(state == SUBMENU_SELECT){
           state = MENU_SELECT;
@@ -74,15 +74,17 @@ int main (void) {
       }
       else {
         prev_state = state;
-        state = EMERGENCY;
+        state = EMERGENCY_STATE;
       }
-      pthread_cond_signal(&state_Signal);
-      pthread_mutex_unlock(&state_Mutex);
+  	  pthread_cond_broadcast(&state_Signal);
+	  pthread_mutex_unlock(&state_Mutex);
 
-      pthread_mutex_lock(&button_Mutex);  // unlock state machine
-      pthread_cond_signal(&button_Signal);
+      pthread_mutex_lock(&button_Mutex);  // Unlock state machine
+      pthread_cond_broadcast(&button_Signal);
       pthread_mutex_unlock(&button_Mutex);
+
     }
   }
+  alive = FALSE; // fallen out by pressing 'x'
   return 0;
 }

@@ -12,14 +12,9 @@
 #include <time.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <sys/time.h>
-
 
 #include "top.h"
 #include "debug.h"
-#include "threads.h"
-#include "states.h"
-
 #define COMMAND_LEN 150
 #define DATA_SIZE 512
 
@@ -27,11 +22,9 @@
 
 #define TIMEOUT 10
 
-char closest_mac[STRING_LENGTH] = {'\0'};
-char old_mac[STRING_LENGTH] = {'\0'};
-BYTE mac_changed = FALSE;
+extern int alive;
 
-extern int logged_in; // (states.c)
+char closest_mac[STRING_LENGTH] = {'\0'};
 
 /**
  *  @brief Wifi Scan Routine.
@@ -43,37 +36,47 @@ extern int logged_in; // (states.c)
  *  @param Void.
  *  @return Void.
  */
+//void * main(void)
 void * wifi_scan(void)
 {
+
+/* Wifi Signals */
+  extern pthread_mutex_t wifi_Mutex;
+  extern pthread_cond_t wifi_Signal;
+
   struct timespec timeToWait;
   struct timeval now;
   int err;
 
   FILE *pipein_fp;
 
+  int i;
+
   char command[COMMAND_LEN];
   char data[DATA_SIZE];
 
-  int highest_quality, new_quality;
+  int highest_quality = 0;
+  int new_quality = 0;
   char new_mac[STRING_LENGTH];
 
 
   gettimeofday(&now,NULL);
-  while(alive && logged_in)
+  
+  while(alive)
   {
     highest_quality = 0;
     new_quality = 0;
     bzero(new_mac, STRING_LENGTH);
-
+    
     /* Execute a process listing */
-    sprintf(command, "iwlist wlan0 scan | awk -W interactive ' $4 ~ /Address/ { print $5} $1 ~ /Quality/ { print $1 } ' | cut -d= -f2 | cut -d/ -f1");
-//    sprintf(command, "awk -W interactive ' $4 ~ /Address/ { print $5} $1 ~ /Quality/ { print $1 } ' scan.txt | cut -d= -f2 | cut -d/ -f1");
+//    sprintf(command, "sudo iwlist wlan0 scan | awk -W interactive ' $4 ~ /Address/ { print $5} $1 ~ /Quality/ { print $1 } ' | cut -d= -f2 | cut -d/ -f1");
+    sprintf(command, "awk -W interactive ' $4 ~ /Address/ { print $5} $1 ~ /Quality/ { print $1 } ' scan.txt | cut -d= -f2 | cut -d/ -f1");
   
     /* Setup our pipe for reading and execute our command. */
     if((pipein_fp = popen(command,"r")) == NULL){
         fprintf(stderr, "Could not open pipe for output.\n");
         perror("popen");
-        continue;
+        exit(1);
     }
   
     /* Processing loop */
@@ -89,7 +92,7 @@ void * wifi_scan(void)
         strcpy(closest_mac,new_mac);
       }
     }
-
+    
     /* Close iwlist pipe, checking for errors */
     if (pclose (pipein_fp) != 0)
     {
@@ -97,40 +100,27 @@ void * wifi_scan(void)
     }
     if (highest_quality != 0)
     {
-      if (strcmp(closest_mac,old_mac) != 0)
-      {
-        printd("closest mac:\t\t %s\n",closest_mac);
-        mac_changed = TRUE;
-        strcpy(old_mac,closest_mac);
-        
-	      
-	      //pthread_mutex_lock(&network_Mutex);
-	      pthread_cond_broadcast(&network_Signal); //wake up the network thread
-	      
-    	  //pthread_mutex_unlock(&network_Mutex);
-    	  
-      }
+      printf("closest mac:\t\t %s\n",closest_mac);
     }
     //sleep(10);
-
+    
     gettimeofday(&now,NULL);
     timeToWait.tv_sec = now.tv_sec + TIMEOUT;
     timeToWait.tv_nsec = 0;
     pthread_mutex_lock(&wifi_Mutex);
     err = pthread_cond_timedwait(&wifi_Signal, &wifi_Mutex, &timeToWait);
-/*    if (err == ETIMEDOUT) {
-      printd("wifi-scan timed out\n");
+    if (err == ETIMEDOUT) {
+      printf("timed out\n");
     }
     else
     {
-      printd("wifi-scan called\n");
+      printf("called\n");
     }
-*/
     pthread_mutex_unlock(&wifi_Mutex);
-
+    
   }
  
-  pthread_exit(0);
+  return;
 }
 
 

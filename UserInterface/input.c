@@ -16,13 +16,19 @@
 #include "threads.h"
 #include "display.h"
 #include "debug.h"
+#include "gstClient.h"
+#include "network.h"
 
+BYTE playing = FALSE;
 BYTE authentication = FALSE;
 char temp_string[BUFFER_SIZE] = {0};
 
-BYTE playing = FALSE;
+BYTE pause = FALSE;
 
 BYTE play_track(char * buffer,int buf_len);
+
+
+int already_logged_in = FALSE;
 
 /*------------------------------------------------------------------------------
  * User Interface State Machines
@@ -49,22 +55,9 @@ void input_pin(char button_read){
   extern BYTE check_pin(char *, int);
 
   switch(button_read){
-  case '0':
-  case '1':
-  case '2':
-  case '3':
-  case '4':
-  case '5':
-  case '6':
-  case '7':
-  case '8':
-  case '9':
 
-    insert_char(button_read);
-    break;
-
-  case ACCEPT_PLAY:
   case ENTER_MENU:
+  case ACCEPT_PLAY:
     if(input_len < PIN_MAX){
       display_string("PIN too short.",BLOCKING);
     }
@@ -76,27 +69,33 @@ void input_pin(char button_read){
       reset_buffers();
 
       if(authentication == TRUE){
-    	printd("Authentication Passed\n");
+        printd("Authentication Passed\n");
 
-    	pthread_mutex_lock(&state_Mutex);
-    	logged_in = TRUE;
+    	  pthread_mutex_lock(&state_Mutex);
+    	  logged_in = TRUE;
         state = WAITING_LOGGED_IN;
-    	pthread_mutex_unlock(&state_Mutex);
+      	pthread_mutex_unlock(&state_Mutex);
+      	
+      	/* Launch threads on log in */
+      	if (already_logged_in == FALSE)
+	      {
+	        start_logged_in_threads();
+	        already_logged_in = TRUE;
+	      }
 
-    	display_string("Welcome.",BLOCKING);
-    	display_string("Enter Track Number.",NOT_BLOCKING);
+      	display_string("Welcome.",BLOCKING);
+      	display_string("Enter Track Number.",NOT_BLOCKING);
       }
       else{
-    	printd("Authentication Failed\n");
+      	printd("Authentication Failed\n");
         pthread_mutex_lock(&state_Mutex);
-    	logged_in = FALSE;
-        pthread_mutex_unlock(&state_Mutex);
-    	display_string("Please Enter VALID PIN!",NOT_BLOCKING);
-
-
-        pthread_mutex_lock(&state_Mutex);
+      	logged_in = FALSE;
+      	already_logged_in = FALSE;
         state = WAITING_LOGGED_OUT;
         pthread_mutex_unlock(&state_Mutex);
+      	display_string("Please Enter VALID PIN!",NOT_BLOCKING);
+
+
       }
     }
     break;
@@ -121,7 +120,10 @@ void input_pin(char button_read){
   case DELETE:
     delete_char();
     break;
+
   default:
+    if (button_read >= '0' && button_read <= '9')   /* 0-9*/
+      insert_char(button_read);
     break;
   }
 }
@@ -143,21 +145,20 @@ void input_pin(char button_read){
 void input_track_number(char button_read){
 
   switch(button_read){
-  case '0':
-  case '1':
-  case '2':
-  case '3':
-  case '4':
-  case '5':
-  case '6':
-  case '7':
-  case '8':
-  case '9':
-    insert_char(button_read);
-    break;
+
+
+  case ENTER_MENU:
+    if (input_len == 0)
+    {
+      pthread_mutex_lock(&state_Mutex);
+      state = MENU_SELECT;
+      pthread_mutex_unlock(&state_Mutex);
+      break;
+    }
+
 
   case ACCEPT_PLAY:
-  case ENTER_MENU:
+    printf("input_len: %d\n",input_len);
     if(input_len < TRACK_MIN || input_len >= TRACK_MAX){
       display_string("Invalid.",NOT_BLOCKING);
     }
@@ -170,10 +171,16 @@ void input_track_number(char button_read){
         sprintf(temp_string,"Track Number %s Playing",input_buffer);
         reset_buffers();
         display_string(temp_string,BLOCKING);
+	      //playGst();
       }
-      else{
-        display_string("Track not found.",BLOCKING);
-      }
+      else if(playing == END_OF_PLAYLIST)
+	    {
+	      display_string("End of playlist.",BLOCKING); //to james, only 50 chars!!
+	    }
+      else
+	    {
+	      display_string("Track not found.",BLOCKING);
+	    }
 
   	  pthread_mutex_lock(&state_Mutex);
       state = WAITING_LOGGED_IN;
@@ -183,6 +190,12 @@ void input_track_number(char button_read){
   	  //display timing info
     }
     break;
+
+
+  case DELETE:
+    delete_char();
+    if (input_len)
+      break;
 
   case CANCEL:
     reset_buffers();
@@ -201,10 +214,9 @@ void input_track_number(char button_read){
     move_cursor(LEFT);
     break;
 
-  case DELETE:
-    delete_char();
-    break;
   default:
+    if (button_read >= '0' && button_read <= '9')   /* 0-9*/
+      insert_char(button_read);
     break;
   }
 }

@@ -40,10 +40,21 @@ extern pthread_cond_t request_Signal;
 extern pthread_mutex_t timer_Mutex;
 extern pthread_cond_t timer_Signal;
 
+/* Gstreamer Signals  */
+extern pthread_mutex_t gst_control_Mutex;
+extern pthread_cond_t gst_control_Signal;
+
+/* Wifi Signals */
+extern pthread_mutex_t wifi_Mutex;
+extern pthread_cond_t wifi_Signal;
+
 /* Local Function Prototypes */
 
 void setup_threads(void);
 void start_threads(void);
 void closing_time(void);
+
+void start_logged_in_threads(void);
+void stop_logged_in_threads(void);
 
 #endif /* THREADS_H_ */

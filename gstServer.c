@@ -1,28 +1,33 @@
 /******************************************************************************************
- * gstServer.c                                                                            *
- * Description: This file will setup gstreamer on the server side and stream audio to the *
- *              client.
- * External globals: None                                                                 *
- * Author: James Sleeman                                                                  *
- * This is based on the Gstreamer hello world application which cam be found here:        *
- * http://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/chapter-helloworld.html
- *****************************************************************************************/
+* gstServer.c *
+* Description: This file will setup gstreamer on the server side and stream audio to the *
+* client.
+* External globals: None *
+* Author: James Sleeman *
+* This is based on the Gstreamer hello world application which cam be found here: *
+* http://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/chapter-helloworld.html
+*****************************************************************************************/
+
+#include <string.h>
 
 #include <gst/gst.h>
 #include <glib.h>
 
 #include <linux/limits.h> // not sure which one i need for MAX_PATH
 #include <limits.h>
+//#define STANDALONE 1
 
-char path[PATH_MAX];
 int port;
-char ip[15];
+char ip[16];
 
+GMainLoop *loop;
+GstElement *source, *pipeline;
+  
 static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
 {
   GMainLoop *loop = (GMainLoop *) data;
 
-  switch (GST_MESSAGE_TYPE (msg)) 
+  switch (GST_MESSAGE_TYPE (msg))
     {
 
     case GST_MESSAGE_EOS:
@@ -30,19 +35,19 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
       g_main_loop_quit (loop);
       break;
       
-    case GST_MESSAGE_ERROR: 
+    case GST_MESSAGE_ERROR:
       {
-	gchar  *debug;
-	GError *error;
-	
-	gst_message_parse_error (msg, &error, &debug);
-	g_free (debug);
-	
-	g_printerr ("Error: %s\n", error->message);
-	g_error_free (error);
-	
-	g_main_loop_quit (loop);
-	break;
+        gchar *debug;
+        GError *error;
+
+        gst_message_parse_error (msg, &error, &debug);
+        g_free (debug);
+
+        g_printerr ("Error: %s\n", error->message);
+        g_error_free (error);
+
+        g_main_loop_quit (loop);
+        break;
       }
       
     default:
@@ -52,23 +57,32 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
   return TRUE;
 }
 
+
+#ifdef STANDALONE
 int main (int argc, char *argv[])
+#else
+ int gstServer(int port_in, char * ip_in, char * path_in)
+#endif
 {
-  GMainLoop *loop;
+  char path[100];
+  port = port_in;
+  strcpy(ip,ip_in);
+  strcpy(path,path_in);
+
   
-  GstElement *pipeline, *source, *sink;
+  GstElement *sink;
   GstBus *bus;
 
   /* Initialisation */
-  gst_init (&argc, &argv);
+  gst_init (NULL, NULL);
   loop = g_main_loop_new (NULL, FALSE);
 
   /* Create gstreamer elements */
-  pipeline = gst_pipeline_new ("client"); 
-  source   = gst_element_factory_make ("filesrc",       "file-source");
-  sink     = gst_element_factory_make ("autoaudiosink", "client");
+  pipeline = gst_pipeline_new ("client");
+  source = gst_element_factory_make ("filesrc", "file-source");
+  sink = gst_element_factory_make ("tcpclientsink", "client");
 
-  if (!pipeline || !source || !sink) 
+  if (!pipeline || !source || !sink)
     {
       g_printerr ("One element could not be created. Exiting.\n");
       return -1;
@@ -81,7 +95,7 @@ int main (int argc, char *argv[])
 #else
   g_object_set (G_OBJECT (source), "location", path, NULL);
 #endif
-  g_object_set (G_OBJECT (source), "host", ip, NULL); 
+  g_object_set (G_OBJECT (source), "host", ip, NULL);
   g_object_set (G_OBJECT (source), "port", port, NULL);
 
   /* we add a message handler */
@@ -117,9 +131,25 @@ int main (int argc, char *argv[])
   g_print ("Returned, stopping playback\n");
   gst_element_set_state (pipeline, GST_STATE_NULL);
 
-  g_print ("Deleting pipeline\n");
+  g_print ("Deleting pipline\n");
   gst_object_unref (GST_OBJECT (pipeline));
 
   return 0;
 }
 
+void killGst()
+{
+  g_main_loop_quit(loop);
+}
+void playGst()
+{
+  gst_element_set_state(pipeline, GST_STATE_PLAYING);
+}
+/*void stopGst()
+{
+  gst_element_set_state(pipeline, GST_STATE_STOPPED);
+}*/
+void setPathGst(char * path)
+{
+ g_object_set (G_OBJECT (source), "location", path, NULL);
+}
