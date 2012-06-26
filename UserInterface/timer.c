@@ -71,7 +71,7 @@ void * timer(void){
   while(alive && logged_in)
   {
 
-    long long int time = 0;
+    long long int time = 0, prev_time = 0;
 
     pthread_mutex_lock(&timer_Mutex);
     err = pthread_cond_timedwait(&timer_Signal, &timer_Mutex, &timeToWait);
@@ -104,6 +104,13 @@ void * timer(void){
       count = time / (1000000000UL);
       show_time();
       paused_blink = FALSE;
+      
+      if (time == prev_time)
+      {
+        killGst();
+        init = FALSE;
+        clear_time();        
+      }
     }
     else
     {
