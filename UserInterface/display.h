@@ -35,7 +35,7 @@ enum display_states{
 
 #define PIN_MAX		  	4
 #define TRACK_MIN       1
-#define TRACK_MAX	  	5
+#define TRACK_MAX	  	6
 #define DIGITS_MAX		3
 
 #define ACCEPT_PLAY    'A'

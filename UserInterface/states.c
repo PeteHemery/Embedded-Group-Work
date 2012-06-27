@@ -7,15 +7,17 @@
 
 #include "states.h"
 
-//int state = INIT_STATE; // State machine variable
-int state = WAITING_LOGGED_IN; // State machine variable
+int state = INIT_STATE; // State machine variable
+//int state = WAITING_LOGGED_IN; // State machine variable
 int logged_in = FALSE;  		// Client connected to server
+
+extern int gst_play_pause();
+extern void set_filename(char *filename);
 
 void * state_machine(void){
   char *emergency="! EMERGENCY !";
   char button_read = FALSE;  // Local snapshot of Global 'Button'
   int state_read;
-  int pause = FALSE;
 
   while(alive){
 	pthread_mutex_lock(&state_Mutex);
@@ -41,6 +43,7 @@ void * state_machine(void){
 
       if(state_read == EMERGENCY){ // Display Blocking Message
         reset_buffers();
+        set_filename("Emergency/English/emergency.mp3");
         continue;
       }
     }
@@ -78,19 +81,20 @@ void * state_machine(void){
       case WAITING_LOGGED_IN:
         switch(button_read){
 
-          case ACCEPT_PLAY:
-            pause=~pause;
+        case ACCEPT_PLAY:
+/*
+          if (!input_len){
+            printf("waiting loggedin\n");
+            if (gst_play_pause()){
+              display_string("Paused",NOT_BLOCKING);
+            }
+            else{
+              display_string("Playing",NOT_BLOCKING);
+            }
+          }
+*/
+          break;
 
-            if (pause == TRUE)
-            {
-              //pauseGst();
-            }
-            else if (pause == FALSE)
-            {
-              //playGst();
-            }
-            printf("pause = %d\n",pause);
-            break;
 
           case ENTER_MENU:
             pthread_mutex_lock(&state_Mutex);
@@ -106,10 +110,10 @@ void * state_machine(void){
             }
             else{
               display_string("Enter Track Number.",NOT_BLOCKING);
+              break;
             }
-            break;
           }
-          break;
+          //break;
 
       case INPUTTING_TRACK_NUMBER:
         if(button_read){

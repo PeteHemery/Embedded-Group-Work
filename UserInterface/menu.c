@@ -95,6 +95,8 @@ void menu_select(void){
             state = INIT_STATE;
             state_read = state;
             pthread_mutex_unlock(&state_Mutex);
+
+            set_filename("Control/English/goodbye.mp3");
             printf("Logging Out\n");
 		    break;
 		  case EXIT_PROG:

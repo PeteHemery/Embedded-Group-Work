@@ -402,13 +402,34 @@ void display_input_buffer(void){
   pthread_mutex_unlock(&display_Mutex);
 }
 
-void display_time(void){};
+
+/**
+* @brief Display Time.
+*
+* This function displays the current time value of
+* the current streaming track.
+*
+* @param Void.
+* @return Void.
+*/
+void display_time(char *in){
+  if (display_flag == WAITING && (0 == strlen(input_buffer)) && state == WAITING_LOGGED_IN)
+  {
+    strcpy(display_buffer,in);
+    display_flag = DISPLAYING_TIME;
+  }
+}
+
+void clear_time(void){
+  bzero(display_buffer,BUFFER_SIZE);
+  display_flag = CLEARING_TIME;
+}
 
 void display_volume(long vol){
   pthread_mutex_lock(&display_Mutex);
   bzero(input_buffer,BUFFER_SIZE);
   sprintf(input_buffer,"%02lu",vol);
-  printf("input_buffer: %s\n",input_buffer);
+  //printf("input_buffer: %s\n",input_buffer);
   display_flag = INPUTTING;
   cursor_pos = 2;
   reset_flag = TRUE;

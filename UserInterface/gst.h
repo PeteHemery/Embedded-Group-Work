@@ -1,17 +1,23 @@
-/*
- * gst.h
- *
- *  Created on: 22 Feb 2012
- *      Author: student
- */
+/******************************************************************************************
+* gstClient.h *
+* Author: James Sleeman *
+*****************************************************************************************/
 
 #ifndef GST_H_
 #define GST_H_
 
-#include "top.h"
-#include "states.h"
+//#define STANDALONE
 
-extern BYTE gstream_state;
+void killGst();
+void playGst();
+void pauseGst();
+long long int getTimeGst();
+void seekGst();
+void set_ip_and_port(char *ip_in, int port_in);
 
-void * gst_control(void);
-#endif /* GST_H_ */
+void * gst_multicast(void);
+#ifndef STANDALONE
+void * gst(void);
+#endif
+
+#endif

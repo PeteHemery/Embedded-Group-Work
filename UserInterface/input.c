@@ -13,6 +13,9 @@ BYTE playing = FALSE;
 BYTE authentication = FALSE;
 char temp_string[BUFFER_SIZE] = {0};
 
+extern int gst_play_pause();
+extern BYTE play_track(char * buffer,int buf_len);
+
 /*------------------------------------------------------------------------------
  * User Interface State Machines
  *------------------------------------------------------------------------------
@@ -44,8 +47,7 @@ void input_pin(char button_read){
         state = WAITING_LOGGED_IN;
     	pthread_mutex_unlock(&state_Mutex);
 
-    	display_string("Welcome.",BLOCKING);
-    	display_string("Enter Track Number.",NOT_BLOCKING);
+    	display_string("Welcome. Enter Track Number.",NOT_BLOCKING);
       }
       else{
     	printf("Authentication Failed\n");
@@ -96,13 +98,31 @@ void input_track_number(char button_read){
 
   switch(button_read){
 
+
+  case ENTER_MENU:
+    if(!input_len){
+      pthread_mutex_lock(&state_Mutex);
+      state = MENU_SELECT;
+      pthread_mutex_unlock(&state_Mutex);
+      break;
+    }
+
   case ACCEPT_PLAY:
+
     printf("input_len: %d\n",input_len);
-    if(input_len < TRACK_MIN || input_len >= TRACK_MAX){
+    if (!input_len){
+      if (gst_play_pause()){
+        display_string("Paused",NOT_BLOCKING);
+      }
+      else{
+        display_string("Playing",NOT_BLOCKING);
+      }
+    }
+    else if(input_len < TRACK_MIN || input_len >= TRACK_MAX){
       display_string("Invalid.",NOT_BLOCKING);
     }
     else{
-      playing = TRUE;//play_track(buffer,strlen(buffer));
+      playing = play_track(input_buffer,strlen(input_buffer));
       if(playing == TRUE){
         printf("Track number: %s\n",input_buffer);
         sprintf(temp_string,"Track Number %s Playing",input_buffer);
@@ -141,14 +161,6 @@ void input_track_number(char button_read){
 
   case DELETE:
     delete_char();
-    break;
-
-  case ENTER_MENU:
-    if(!input_len){
-      pthread_mutex_lock(&state_Mutex);
-      state = MENU_SELECT;
-      pthread_mutex_unlock(&state_Mutex);
-    }
     break;
 
   default:
