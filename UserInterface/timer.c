@@ -71,6 +71,7 @@ void * timer(void){
 
     long long int time = 0;
 
+    printf("timerhere\n");
     pthread_mutex_lock(&timer_Mutex);
     err = pthread_cond_timedwait(&timer_Signal, &timer_Mutex, &timeToWait);
     if (err == ETIMEDOUT) {

@@ -119,7 +119,11 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 
 void killGst()
 {
-  g_main_loop_quit(loop);
+  if (gst_playing == TRUE)
+  {
+    killGst();
+  }
+  gst_playing = FALSE;
 }
 
 

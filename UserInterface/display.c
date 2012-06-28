@@ -141,6 +141,7 @@ void update_display(void){
       }
       digits[1] |= CURSOR_VALUE;
 
+      started_waiting = TRUE;
       display_flag = WAITING;
       break;
 
@@ -149,13 +150,14 @@ void update_display(void){
       for(i=0;i<COLS;i++){
         digits[i] = 0;
       }
+      started_waiting = TRUE; //TODO weren't included in other git branch, but added in..?
       display_flag = WAITING;
 
     case INPUTTING:
       for(i=0;i<COLS;i++){
         digits[i] = display_char(input_buffer[i+cursor_offset]);
       }
-      started_waiting = TRUE;
+      started_waiting = TRUE; //TODO weren't included in other git branch, but added in..?
       display_flag = WAITING;
 
     case WAITING:
