@@ -21,6 +21,8 @@ enum display_states{
 	WAITING,
 	CHANGED,
 	INPUTTING,
+	DISPLAYING_TIME,
+    CLEARING_TIME,
 	WRITING
 } display_state;
 
@@ -95,8 +97,9 @@ void move_cursor(int);
 BYTE display_char(char);
 void display_string(char *,BYTE);
 void display_input_buffer(void);
-void display_time(void);
 void display_volume(long);
+void display_time(char *in);
+void clear_time(void);
 
 extern void reset_buffers(void);
 extern void set_menu(BYTE);

@@ -33,6 +33,10 @@ extern pthread_cond_t state_Signal;
 extern pthread_mutex_t display_Mutex;
 extern pthread_cond_t display_Signal;
 
+/* Timer Signals */
+extern pthread_mutex_t timer_Mutex;
+extern pthread_cond_t timer_Signal;
+
 void closing_time(void);
 
 #endif /* THREADS_H_ */

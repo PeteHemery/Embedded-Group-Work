@@ -7,6 +7,7 @@
 
 #include "display.h"
 #include "displayConstants.h"
+#include "states.h"
 
 /* Display Buffers */
 char input_buffer[BUFFER_SIZE] = {0};
@@ -133,13 +134,30 @@ void update_display(void){
         }
       break;
       
+    case DISPLAYING_TIME:
+      cursor_blink = FALSE;
+      for(i=0;i<COLS;i++){
+        digits[i] = display_char(display_buffer[i]);
+      }
+      digits[1] |= CURSOR_VALUE;
+
+      display_flag = WAITING;
+      break;
+
+    case CLEARING_TIME:
+      cursor_blink = TRUE;
+      for(i=0;i<COLS;i++){
+        digits[i] = 0;
+      }
+      display_flag = WAITING;
+
     case INPUTTING:
       for(i=0;i<COLS;i++){
         digits[i] = display_char(input_buffer[i+cursor_offset]);
       }
       started_waiting = TRUE;
       display_flag = WAITING;
-      
+
     case WAITING:
       if(started_waiting){
         for(i=0;i<COLS;i++){
