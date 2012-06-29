@@ -95,6 +95,7 @@ void input_pin(char button_read){
 /*  INPUTTING_TRACK_NUMBER */
 
 void input_track_number(char button_read){
+  int pause_read;
 
   switch(button_read){
 
@@ -111,11 +112,16 @@ void input_track_number(char button_read){
 
     printf("input_len: %d\n",input_len);
     if (!input_len){
-      if (gst_play_pause()){
-        display_string("Paused",NOT_BLOCKING);
-      }
-      else{
-        display_string("Playing",NOT_BLOCKING);
+      pause_read = gst_play_pause();
+      switch(pause_read){
+        case TRUE:
+          display_string("Paused",NOT_BLOCKING);
+          break;
+        case FALSE:
+          display_string("Playing",NOT_BLOCKING);
+          break;
+        default://not playing
+          break;
       }
     }
     else if(input_len < TRACK_MIN || input_len >= TRACK_MAX){

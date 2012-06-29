@@ -57,21 +57,36 @@ void * timer(void){
   struct timeval now;
   int err, init = FALSE;
   int paused_blink = FALSE;
+  int logged_in_read;
 
   extern int gst_paused;
+  extern int gst_playing;
+
   //extern char closest_mac[];
 
   gettimeofday(&now,NULL);
   timeToWait.tv_sec = now.tv_sec+1;
   timeToWait.tv_nsec = 0;
 
+  printf("timer here!!%ld\n",timeToWait.tv_nsec);
 
-  while(alive && logged_in)
+  while(alive && !logged_in_read)
   {
+    pthread_mutex_lock(&state_Mutex);
+    logged_in_read = logged_in;
+    pthread_mutex_unlock(&state_Mutex);
+    sleep(1);
+  }
 
+  while(alive && logged_in_read)
+  {
     long long int time = 0;
 
-    printf("timerhere\n");
+    pthread_mutex_lock(&state_Mutex);
+    logged_in_read = logged_in;
+    pthread_mutex_unlock(&state_Mutex);
+
+
     pthread_mutex_lock(&timer_Mutex);
     err = pthread_cond_timedwait(&timer_Signal, &timer_Mutex, &timeToWait);
     if (err == ETIMEDOUT) {
@@ -91,8 +106,8 @@ void * timer(void){
       if (init == FALSE)
       {
         long long int nano_offset = (1000000000UL - time);
-        timeToWait.tv_sec = now.tv_sec + (nano_offset / 1000000000UL);
-        timeToWait.tv_nsec = nano_offset % 1000000000UL;
+        timeToWait.tv_sec = now.tv_sec;//(nano_offset / 1000000000UL);
+        timeToWait.tv_nsec = nano_offset % 1000000000UL + 3000UL;
         init = TRUE;
       }
       else
@@ -106,15 +121,14 @@ void * timer(void){
     }
     else
     {
-      if (!gst_paused && init == TRUE)
+      if (!gst_playing && init == TRUE) //todo this isn't safe..
       {
         killGst();
-        init = FALSE;
-        clear_time();
       }
+      clear_time();
 
-      timeToWait.tv_sec = now.tv_sec;//+1;
-      timeToWait.tv_nsec = 500000000UL;//0;
+      timeToWait.tv_sec = now.tv_sec+TIMEOUT;
+      timeToWait.tv_nsec = 0;//500000000UL;//0;
       //display_time("    ");
       paused_blink = TRUE;
       init = FALSE;

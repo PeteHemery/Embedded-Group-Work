@@ -121,7 +121,7 @@ void killGst()
 {
   if (gst_playing == TRUE)
   {
-    killGst();
+    g_main_loop_quit(loop);
   }
   gst_playing = FALSE;
 }
@@ -250,8 +250,9 @@ int gst_play_pause()
       gst_paused = FALSE;
     }
     printf("gst_paused = %d\n",gst_paused);
+    return gst_paused;
   }
-  return gst_paused;
+  return -1;
 }
 
 void playGst()
