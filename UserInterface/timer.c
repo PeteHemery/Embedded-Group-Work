@@ -78,14 +78,9 @@ void * timer(void){
     sleep(1);
   }
 
-  while(alive && logged_in_read)
+  while(alive)
   {
     long long int time = 0;
-
-    pthread_mutex_lock(&state_Mutex);
-    logged_in_read = logged_in;
-    pthread_mutex_unlock(&state_Mutex);
-
 
     pthread_mutex_lock(&timer_Mutex);
     err = pthread_cond_timedwait(&timer_Signal, &timer_Mutex, &timeToWait);
@@ -106,8 +101,9 @@ void * timer(void){
       if (init == FALSE)
       {
         long long int nano_offset = (1000000000UL - time);
+
         timeToWait.tv_sec = now.tv_sec;//(nano_offset / 1000000000UL);
-        timeToWait.tv_nsec = nano_offset % 1000000000UL + 3000UL;
+        timeToWait.tv_nsec = nano_offset % 1000000000UL;
         init = TRUE;
       }
       else

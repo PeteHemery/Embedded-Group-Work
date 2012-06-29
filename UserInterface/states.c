@@ -95,6 +95,8 @@ void * state_machine(void){
 */
           break;
 
+        case CANCEL:
+          break;
 
           case ENTER_MENU:
             pthread_mutex_lock(&state_Mutex);

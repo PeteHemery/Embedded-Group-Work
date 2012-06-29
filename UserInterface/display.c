@@ -442,7 +442,7 @@ void display_time(char *in){
 }
 
 void clear_time(void){
-  if (display_flag == DISPLAYING_TIME || (display_flag == WAITING && input_len == 0))
+  if ((display_flag == DISPLAYING_TIME || display_flag == WAITING) && input_len == 0 && state == WAITING_LOGGED_IN)
   {
     bzero(display_buffer,BUFFER_SIZE);
     display_flag = CLEARING_TIME;
