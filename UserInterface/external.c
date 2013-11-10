@@ -44,16 +44,13 @@ int track_num;
     set_filename("Exhibit/Welsh/Primary/05.mp3");
     break;
   case 6:
-    set_filename("Exhibit/English/Higher/06.mp3");
+    set_filename("Exhibit/Spanish/Higher/06.mp3");
     break;
   case 311:
     set_filename("LocationInfo/3p11/English/welcome.mp3");
     break;
   case 328:
     set_filename("LocationInfo/3p28/English/welcome.mp3");
-    break;
-  case 420:
-    set_filename("green.mp3");
     break;
   case 31101:
     set_filename("Exhibit/Classical/31101.mp3");
@@ -73,7 +70,6 @@ int track_num;
     break;
   case 32803:
     set_filename("Exhibit/Classical/32803.mp3");
-
     break;
   default:
     set_filename("Control/English/not_found.mp3");
@@ -83,8 +79,13 @@ int track_num;
   return TRUE;
 }
 
-char * check_time(BYTE flashing){
-  char * time = "04:20";
-  return time;
-}
 
+
+
+
+
+/*
+  case 420:
+    set_filename("dumbfoundead - green.mp3");
+    break;
+ */

@@ -68,7 +68,6 @@ void * timer(void){
   timeToWait.tv_sec = now.tv_sec+1;
   timeToWait.tv_nsec = 0;
 
-  printf("timer here!!%ld\n",timeToWait.tv_nsec);
 
   while(alive && !logged_in_read)
   {
@@ -84,14 +83,15 @@ void * timer(void){
 
     pthread_mutex_lock(&timer_Mutex);
     err = pthread_cond_timedwait(&timer_Signal, &timer_Mutex, &timeToWait);
-    if (err == ETIMEDOUT) {
+/*    if (err == ETIMEDOUT) {
       printf("timer timed out\n");
     }
     else
     {
       printf("timer called\n");
     }
-
+  printf("timer here!!%ld\n",timeToWait.tv_nsec);
+*/
     pthread_mutex_unlock(&timer_Mutex);
 
     gettimeofday(&now,NULL);

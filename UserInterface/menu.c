@@ -89,14 +89,14 @@ void menu_select(void){
 		  case LOG_OUT:
             set_menu(FALSE);
             reset_buffers();
-		    display_string(" Goodbye ",BLOCKING);
+            set_filename("Control/English/goodbye.mp3");
+		    display_string(" Goodbye      ",BLOCKING);
 		    pthread_mutex_lock(&state_Mutex);
 	        logged_in = FALSE;
             state = INIT_STATE;
             state_read = state;
             pthread_mutex_unlock(&state_Mutex);
 
-            set_filename("Control/English/goodbye.mp3");
             printf("Logging Out\n");
 		    break;
 		  case EXIT_PROG:
